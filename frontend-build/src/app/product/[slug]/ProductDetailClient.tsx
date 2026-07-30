@@ -25,7 +25,7 @@ export interface ProductData {
         [key: string]: number | null | undefined;
     };
     price: number;
-    moods: string[];
+
     origin: string;
     caffeine: string;
     tastingNotes: string[];
@@ -56,7 +56,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'The champagne of teas. Harvested in early spring from the high-altitude, misty tea gardens of Darjeeling. This light and floral black tea offers an exquisite muscatel character with hints of apricot, peach, and citrus.',
         prices: { '50g': 299, '100g': 499, '200g': 899 },
         price: 499,
-        moods: ['energize', 'focus'],
+
         origin: 'Darjeeling, West Bengal, India',
         caffeine: 'Medium',
         tastingNotes: ['Muscatel', 'Floral', 'Apricot', 'Citrus'],
@@ -88,7 +88,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'Harvested from the lush Brahmaputra River valley in Assam. Rich, malty, and full-bodied with abundant golden tips. A classic Indian breakfast tea that pairs wonderfully with milk and spices.',
         prices: { '50g': 199, '100g': 349, '200g': 649 },
         price: 349,
-        moods: ['energize'],
+
         origin: 'Assam, India',
         caffeine: 'High',
         tastingNotes: ['Malty', 'Robust', 'Honey', 'Caramel'],
@@ -120,7 +120,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'Grown in the misty Blue Mountains of Nilgiri, South India. Plucked during winter frost, delivering a smooth, fragrant cup with natural sweet eucalyptus and wildflower notes.',
         prices: { '50g': 229, '100g': 399, '200g': 749 },
         price: 399,
-        moods: ['relax', 'focus'],
+
         origin: 'Nilgiri, Tamil Nadu, India',
         caffeine: 'Medium',
         tastingNotes: ['Wildflower', 'Eucalyptus', 'Citrus', 'Sweet Grass'],
@@ -152,7 +152,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'Our signature masala chai blend combining robust Assam CTC black tea with crushed green cardamom, Ceylon cinnamon, sun-dried ginger, cloves, and black pepper. The comforting embrace of traditional Indian tea.',
         prices: { '50g': 179, '100g': 299, '200g': 549 },
         price: 299,
-        moods: ['energize', 'relax'],
+
         origin: 'Blended in India',
         caffeine: 'Medium',
         tastingNotes: ['Cardamom', 'Cinnamon', 'Spiced Ginger', 'Clove'],
@@ -184,7 +184,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'Delicate green tea leaves scent-infused multiple times with freshly harvested night-blooming jasmine blossoms. Floral, smooth, refreshing, and rich in natural antioxidants.',
         prices: { '50g': 259, '100g': 449, '200g': 849 },
         price: 449,
-        moods: ['relax', 'detox'],
+
         origin: 'Kangra Valley, Himachal Pradesh, India',
         caffeine: 'Low',
         tastingNotes: ['Jasmine Floral', 'Sweet Grass', 'Gentle Green'],
@@ -216,7 +216,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'An Ayurvedic wellness herbal infusion combining three sacred varieties of Tulsi (Holy Basil) with spicy sun-dried ginger and lemon peel. Naturally caffeine-free and soothing for immunity.',
         prices: { '50g': 149, '100g': 249, '200g': 449 },
         price: 249,
-        moods: ['detox', 'immunity', 'relax'],
+
         origin: 'Blended in India',
         caffeine: 'None',
         tastingNotes: ['Peppery Tulsi', 'Zesty Ginger', 'Lemongrass'],
@@ -246,7 +246,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'Made exclusively from tender, undamaged spring tea buds. Unfermented and dried naturally under gentle sunlight. Exceptionally smooth with delicate notes of honeysuckle and sweet melon.',
         prices: { '50g': 999, '100g': 1899, '200g': 3499 },
         price: 1899,
-        moods: ['relax', 'focus'],
+
         origin: 'Darjeeling, West Bengal, India',
         caffeine: 'Low',
         tastingNotes: ['Honeysuckle', 'Melon', 'Fresh Hay', 'Nectar'],
@@ -277,7 +277,7 @@ const FALLBACK_PRODUCTS: Record<string, ProductData> = {
         description: 'Naturally fermented aged tea cake. Exhibits deep woody, earthy aromas with subtle notes of dark cocoa and dried plum, finishing with a velvety texture.',
         prices: { '50g': 1299, '100g': 2499, '200g': 4599 },
         price: 2499,
-        moods: ['relax', 'focus', 'detox'],
+
         origin: 'Yunnan Reserve / Blended Master Estate',
         caffeine: 'Medium',
         tastingNotes: ['Woody Earth', 'Dark Cocoa', 'Dried Plum', 'Velvet'],
@@ -312,7 +312,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
         shortDescription: 'Artisan Indian tea blend',
         prices: { '100g': 499 },
         price: 499,
-        moods: ['relax'],
+
         origin: 'India',
         caffeine: 'Medium',
         tastingNotes: ['Smooth', 'Aromatic'],
@@ -360,7 +360,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                             '200g': data.prices?.['200g'] ?? fallback.prices['200g'],
                         },
                         price: data.prices?.['100g'] ?? data.price ?? fallback.price,
-                        moods: Array.isArray(data.moods) && data.moods.length ? data.moods : fallback.moods,
+
                         origin: data.origin || fallback.origin,
                         caffeine: data.caffeine || fallback.caffeine,
                         tastingNotes: Array.isArray(data.tastingNotes) && data.tastingNotes.length ? data.tastingNotes : fallback.tastingNotes,
@@ -583,15 +583,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                                         </div>
                                     </div>
                                 )}
-                                {product.moods && product.moods.length > 0 && (
-                                    <div className="pdp-highlight-card">
-                                        <AppIcon name="smile" size={20} className="pdp-highlight-card__icon" aria-hidden />
-                                        <div>
-                                            <div className="pdp-highlight-card__title">Ideal Mood</div>
-                                            <div className="pdp-highlight-card__val">{product.moods.join(', ')}</div>
-                                        </div>
-                                    </div>
-                                )}
+
                                 <div className="pdp-highlight-card">
                                     <AppIcon name="truck" size={20} className="pdp-highlight-card__icon" aria-hidden />
                                     <div>

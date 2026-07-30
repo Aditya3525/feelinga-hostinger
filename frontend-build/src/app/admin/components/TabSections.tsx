@@ -285,7 +285,7 @@ export function ProductsTab({
     handleDrop,
     uploadImages,
     removeImage,
-    toggleMood,
+
     openEditProduct,
     deleteProduct,
     actionLoading,
@@ -309,7 +309,7 @@ export function ProductsTab({
     handleDrop: (event: any) => void;
     uploadImages: (files: FileList | File[] | null) => Promise<void>;
     removeImage: (index: number) => void;
-    toggleMood: (mood: string) => void;
+
     openEditProduct: (product: AdminRecord) => void;
     deleteProduct: (id: string, name: string) => Promise<void>;
     actionLoading: string | null;
@@ -395,14 +395,6 @@ export function ProductsTab({
                                         <label className="admin-form-label">Tags</label>
                                         <input className="admin-form-control" type="text" placeholder="premium, bestseller" value={productForm.tags} onChange={e => handleProductFormChange('tags', e.target.value)} />
                                         <div className="admin-form-helper">Comma separated keywords for search.</div>
-                                    </div>
-                                    <div className="admin-form-grid__span-all">
-                                        <label className="admin-form-label">Moods</label>
-                                        <div className="admin-moods">
-                                            {['energize', 'relax', 'focus', 'detox', 'glow', 'immunity'].map(mood => (
-                                                <button type="button" key={mood} onClick={() => toggleMood(mood)} className={`admin-mood-chip ${productForm.moods.includes(mood) ? 'is-active' : ''}`}>{capitalize(mood)}</button>
-                                            ))}
-                                        </div>
                                     </div>
                                     <div className="admin-flags">
                                         <label className="admin-flag"><input type="checkbox" checked={productForm.isBestSeller} onChange={e => handleProductFormChange('isBestSeller', e.target.checked)} /> Best Seller</label>

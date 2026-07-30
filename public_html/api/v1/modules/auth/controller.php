@@ -558,73 +558,6 @@ function auth_check_email(): void
 }
 
 /**
- * GET /auth/wishlist
- * Ref: controller.ts:319-324
- */
-function auth_get_wishlist(): void
-{
-    $user = authenticate();
-    $db = get_db();
-    $stmt = $db->prepare('
-        SELECT p.id as _id, p.name, p.slug, p.images, p.price_50g, p.price_100g, p.price_200g,
-               p.type, p.short_description, p.rating, p.review_count, p.in_stock, p.stock
-        FROM wishlist w
-        JOIN products p ON w.product_id = p.id
-        WHERE w.user_id = ? AND p.deleted_at IS NULL
-    ');
-    $stmt->execute([$user['id']]);
-    $items = $stmt->fetchAll();
-
-    // Format to match MongoDB output
-    foreach ($items as &$item) {
-        $item['prices'] = [
-            '50g' => $item['price_50g'] ? (float)$item['price_50g'] : null,
-            '100g' => (float) $item['price_100g'],
-            '200g' => $item['price_200g'] ? (float)$item['price_200g'] : null,
-        ];
-        $item['images'] = json_decode($item['images'] ?? '[]', true);
-        $item['inStock'] = (bool) $item['in_stock'];
-        $item['shortDescription'] = $item['short_description'];
-        $item['reviewCount'] = (int) $item['review_count'];
-        $item['rating'] = (float) $item['rating'];
-        $item['stock'] = (int) $item['stock'];
-        unset($item['price_50g'], $item['price_100g'], $item['price_200g'], $item['in_stock'], $item['short_description'], $item['review_count']);
-    }
-
-    json_success($items);
-}
-
-/**
- * POST /auth/wishlist/:productId
- * Ref: controller.ts:326-338
- */
-function auth_toggle_wishlist(string $productId): void
-{
-    $user = authenticate();
-    $db = get_db();
-
-    $stmt = $db->prepare('SELECT user_id FROM wishlist WHERE user_id = ? AND product_id = ?');
-    $stmt->execute([$user['id'], $productId]);
-    $exists = $stmt->fetch();
-
-    if ($exists) {
-        $db->prepare('DELETE FROM wishlist WHERE user_id = ? AND product_id = ?')
-           ->execute([$user['id'], $productId]);
-        $action = 'removed';
-    } else {
-        $db->prepare('INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)')
-           ->execute([$user['id'], $productId]);
-        $action = 'added';
-    }
-
-    $stmt = $db->prepare('SELECT product_id FROM wishlist WHERE user_id = ?');
-    $stmt->execute([$user['id']]);
-    $wishlist = array_column($stmt->fetchAll(), 'product_id');
-
-    echo json_encode(['status' => 'success', 'action' => $action, 'wishlist' => $wishlist], JSON_UNESCAPED_UNICODE);
-}
-
-/**
  * GET /auth/data-export
  * Ref: controller.ts:340-351
  */
@@ -683,7 +616,7 @@ function auth_delete_account(): void
     $db->prepare("UPDATE orders SET ship_first_name='Deleted', ship_last_name='User', ship_phone='0000000000', ship_line1='Account deleted', ship_line2='' WHERE user_id = ?")
        ->execute([$user['id']]);
 
-    // Delete related data (cascades handle reviews/cart/wishlist/addresses)
+    // Delete related data (cascades handle reviews/cart/addresses)
     $db->prepare('DELETE FROM users WHERE id = ?')->execute([$user['id']]);
 
     json_success(['message' => 'Your account and personal data have been deleted.']);

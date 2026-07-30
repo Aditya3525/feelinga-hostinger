@@ -83,7 +83,7 @@ export default function Learn() {
                         <p className="overline">Wellness</p>
                         <h2>Tea & Your Health</h2>
                     </div>
-                    <div className="mood-grid fade-in">
+                    <div className="feature-grid fade-in">
                         {[
                             { icon: 'brain', title: 'Mental Clarity', desc: 'L-theanine in green tea promotes calm focus without the jitters of coffee.' },
                             { icon: 'activity', title: 'Immunity', desc: 'Antioxidant-rich teas like white and green boost your immune system naturally.' },
@@ -91,8 +91,8 @@ export default function Learn() {
                             { icon: 'heart', title: 'Heart Health', desc: 'Regular tea consumption is linked to lower cholesterol and improved cardiovascular health.' },
                             { icon: 'leaf', title: 'Digestion', desc: 'Peppermint, ginger, and fennel teas soothe the stomach and aid digestion after meals.' },
                         ].map((w, i) => (
-                            <div className="mood-card mood-card--static" key={i}>
-                                <div className="mood-card__icon"><AppIcon name={w.icon} size={24} aria-hidden /></div>
+                            <div className="feature-card feature-card--static" key={i}>
+                                <div className="feature-card__icon"><AppIcon name={w.icon} size={24} aria-hidden /></div>
                                 <h4>{w.title}</h4>
                                 <p>{w.desc}</p>
                             </div>

@@ -41,8 +41,6 @@ require_once __DIR__ . '/middleware/cors.php';
 require_once __DIR__ . '/middleware/auth.php';
 require_once __DIR__ . '/middleware/rate_limit.php';
 
-// ===== INIT DATABASE (SQLite auto-schema) =====
-init_sqlite_schema();
 
 // ===== CORS =====
 handle_cors();

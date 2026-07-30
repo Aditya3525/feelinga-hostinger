@@ -90,15 +90,7 @@ switch (true) {
         auth_check_email();
         break;
 
-    // GET /auth/wishlist
-    case $method === 'GET' && $action === 'wishlist':
-        auth_get_wishlist();
-        break;
 
-    // POST /auth/wishlist/:productId
-    case $method === 'POST' && $action === 'wishlist' && $param:
-        auth_toggle_wishlist($param);
-        break;
 
     // GET /auth/data-export
     case $method === 'GET' && $action === 'data-export':

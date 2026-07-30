@@ -112,7 +112,7 @@ export default function Admin() {
         name: '', slug: '', type: 'Black Tea', description: '', shortDescription: '', origin: '',
         'price50g': '', 'price100g': '', 'price200g': '',
         stock: 100, caffeine: 'medium', tastingNotes: '', tags: '', images: [] as string[],
-        moods: [] as string[], isBestSeller: false, isNewArrival: true, inStock: true,
+        isBestSeller: false, isNewArrival: true, inStock: true,
         brewTemp: '', brewSteep: '', brewAmount: '',
     };
     const [productForm, setProductForm] = useState<AdminRecord>(emptyProduct);
@@ -659,7 +659,7 @@ export default function Admin() {
             brewSteep: p.brewingInstructions?.steepTime || '',
             brewAmount: p.brewingInstructions?.amount || '',
             images: resolveProductImageList(p.images || []),
-            moods: p.moods || [],
+
             isBestSeller: p.isBestSeller || false,
             isNewArrival: p.isNewArrival || false,
             inStock: p.inStock !== false,
@@ -678,12 +678,7 @@ export default function Admin() {
         });
     };
 
-    const toggleMood = (mood: string) => {
-        setProductForm(prev => ({
-            ...prev,
-            moods: prev.moods.includes(mood) ? prev.moods.filter((m: string) => m !== mood) : [...prev.moods, mood],
-        }));
-    };
+
 
     const uploadImages = async (files: FileList | File[] | null) => {
         if (!files || files.length === 0) return;
@@ -801,7 +796,7 @@ export default function Admin() {
                 amount: productForm.brewAmount.trim() || undefined,
             },
             images: productForm.images,
-            moods: productForm.moods,
+
             isBestSeller: productForm.isBestSeller,
             isNewArrival: productForm.isNewArrival,
             inStock: normalizedStock > 0,
@@ -990,7 +985,7 @@ export default function Admin() {
                             handleDrop={handleDrop}
                             uploadImages={uploadImages}
                             removeImage={removeImage}
-                            toggleMood={toggleMood}
+
                             openEditProduct={openEditProduct}
                             deleteProduct={deleteProduct}
                             actionLoading={actionLoading}

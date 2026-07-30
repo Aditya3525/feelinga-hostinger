@@ -136,7 +136,7 @@ export default function Gifting() {
                         <p className="overline">Perfect For</p>
                         <h2>Every Occasion</h2>
                     </div>
-                    <div className="mood-grid fade-in">
+                    <div className="feature-grid fade-in">
                         {[
                             { icon: 'gift', title: 'Birthdays', desc: 'A thoughtful, healthy gift they\'ll actually love.' },
                             { icon: 'gift', title: 'Weddings', desc: 'Elegant favors and hampers for the special day.' },
@@ -144,8 +144,8 @@ export default function Gifting() {
                             { icon: 'gift', title: 'Festivals', desc: 'Diwali, Christmas, Eid — tea for every celebration.' },
                             { icon: 'gift', title: 'Thank You', desc: 'Show gratitude with the gift of good tea.' },
                         ].map((o, i) => (
-                            <div className="mood-card mood-card--static" key={i}>
-                                <div className="mood-card__icon"><AppIcon name={o.icon} size={24} aria-hidden /></div>
+                            <div className="feature-card feature-card--static" key={i}>
+                                <div className="feature-card__icon"><AppIcon name={o.icon} size={24} aria-hidden /></div>
                                 <h4>{o.title}</h4>
                                 <p>{o.desc}</p>
                             </div>

@@ -52,14 +52,6 @@ function get_db(): PDO
     return $pdo_instance;
 }
 
-/**
- * No-op — kept so any existing call to init_sqlite_schema() doesn't break.
- * SQLite has been removed. Schema is managed via schema.sql on Hostinger.
- */
-function init_sqlite_schema(): void
-{
-    // SQLite removed. MySQL schema is managed via schema.sql imported in phpMyAdmin.
-}
 
 function check_db_health(): array
 {
