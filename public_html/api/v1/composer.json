@@ -1,0 +1,19 @@
+{
+    "name": "feelinga/tea-api",
+    "description": "PHP REST API for Feelinga Tea e-commerce",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "firebase/php-jwt": "^6.11",
+        "phpmailer/phpmailer": "^6.9",
+        "tecnickcom/tcpdf": "^6.7"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "policy": {
+            "advisories": {
+                "block": false
+            }
+        }
+    }
+}

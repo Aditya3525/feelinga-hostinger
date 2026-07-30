@@ -1,0 +1,30 @@
+{
+  "name": "next-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint --max-warnings=0 \"src/**/*.{js,jsx,ts,tsx}\"",
+    "generate:india-address-data": "node ./scripts/generate-india-address-data.mjs",
+    "typecheck": "tsc --noEmit",
+    "typecheck:strict": "tsc -p tsconfig.strict.json --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^1.8.0",
+    "next": "^16.2.10",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.3.2",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "16.1.6",
+    "india-pincode-search": "^1.0.2",
+    "typescript": "5.9.3"
+  }
+}

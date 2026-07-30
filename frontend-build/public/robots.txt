@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow private/admin routes
+Disallow: /admin
+Disallow: /profile
+Disallow: /checkout
+Disallow: /order-confirm
+Disallow: /api/
+
+Sitemap: https://www.feelinga.com/sitemap.xml
