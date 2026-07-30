@@ -304,9 +304,7 @@ function products_remove(string $id): void
 {
     $user = require_admin();
     $db = get_db();
-    global $db_type;
-    $nowFunc = ($db_type === 'mysql') ? 'NOW()' : "datetime('now')";
-    $stmt = $db->prepare("UPDATE products SET deleted_at = {$nowFunc} WHERE id = ?");
+    $stmt = $db->prepare("UPDATE products SET deleted_at = NOW() WHERE id = ?");
     $stmt->execute([$id]);
     if ($stmt->rowCount() === 0) json_error('Product not found', 404);
 

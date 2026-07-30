@@ -143,7 +143,7 @@ function ShopInner() {
                         name: p.name,
                         type: p.type?.toLowerCase().replace(/\s+/g, '').replace('tea', '').replace('masala', 'chai').replace('herbalinfusion', 'herbal') || '',
                         typeName: p.type,
-                        moods: p.moods || [],
+
                         origin: p.origin?.split(',')[0]?.trim().toLowerCase() || '',
                         originLabel: p.origin?.split(',')[0]?.trim() || '',
                         price: p.prices?.['100g'] || 0,
@@ -292,7 +292,7 @@ function ShopInner() {
                                     type="button"
                                     className="plp-active-filter plp-active-filter--clear"
                                     aria-label="Clear all filters"
-                                    onClick={() => { setFilters({ type: [], mood: [], origin: [], price: [] }); setPage(1); }}
+                                    onClick={() => { setFilters({ type: [], origin: [], price: [] }); setPage(1); }}
                                 >
                                     Clear all <AppIcon name="xCircle" size={12} aria-hidden />
                                 </button>

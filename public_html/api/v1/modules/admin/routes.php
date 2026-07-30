@@ -7,7 +7,7 @@ $action = $segments[1] ?? '';
 $param = $segments[2] ?? '';
 
 switch (true) {
-    case $method === 'GET' && $action === '': admin_dashboard(); break;
+    case $method === 'GET' && ($action === '' || $action === 'dashboard'): admin_dashboard(); break;
     case $method === 'GET' && $action === 'activity': admin_activity(); break;
     case $method === 'GET' && $action === 'users': admin_list_users(); break;
     case $method === 'GET' && $action === 'users' && $param: admin_get_user($param); break;

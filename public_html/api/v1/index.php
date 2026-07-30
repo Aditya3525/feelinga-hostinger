@@ -46,6 +46,7 @@ require_once __DIR__ . '/middleware/rate_limit.php';
 handle_cors();
 
 // ===== PARSE REQUEST =====
+header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 // Determine URI path from all candidate server variables

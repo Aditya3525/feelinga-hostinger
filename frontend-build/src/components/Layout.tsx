@@ -238,8 +238,7 @@ export default function Layout({ children }: AppProviderProps) {
 
     const navLinks = [
         { href: '/shop', label: 'Shop' },
-        { href: '/#moods', label: 'Moods' },
-        { href: '/gifting', label: 'Gifting' },
+
         { href: '/learn', label: 'Learn' },
         { href: '/about', label: 'About' },
         { href: '/contact', label: 'Contact' },
@@ -475,7 +474,7 @@ export default function Layout({ children }: AppProviderProps) {
                         </div>
                         <div>
                             <h4 className="footer__heading">Shop</h4>
-                            <div className="footer__links"><Link href="/shop">All Teas</Link><Link href="/shop?type=Green+Tea">Green Tea</Link><Link href="/shop?type=Black+Tea">Black Tea</Link><Link href="/shop?type=Herbal">Herbal &amp; Wellness</Link><Link href="/gifting">Gift Sets</Link></div>
+                            <div className="footer__links"><Link href="/shop">All Teas</Link><Link href="/shop?type=Green+Tea">Green Tea</Link><Link href="/shop?type=Black+Tea">Black Tea</Link><Link href="/shop?type=Herbal">Herbal &amp; Wellness</Link></div>
                         </div>
                         <div>
                             <h4 className="footer__heading">Company</h4>

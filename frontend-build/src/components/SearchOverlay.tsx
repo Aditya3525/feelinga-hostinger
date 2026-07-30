@@ -228,7 +228,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 <div className="search-overlay__header">
                     <div className="search-overlay__title-wrap">
                         <h3 id="search-overlay-title">Search Our Collection</h3>
-                        <p>Discover teas by flavour, mood, or moment.</p>
+                        <p>Discover teas by flavour or moment.</p>
                     </div>
                     <button type="button" className="search-overlay__close" onClick={onClose} aria-label="Close search">
                         <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></svg>
@@ -241,7 +241,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             ref={inputRef}
                             type="text"
                             className="search-overlay__input"
-                            placeholder="Search teas, flavours, moods..."
+                            placeholder="Search teas, flavours..."
                             value={query}
                             onChange={handleSearch}
                             onKeyDown={handleInputKeyDown}

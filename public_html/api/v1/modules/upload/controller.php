@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 $uploads_dir = realpath(__DIR__ . '/../../../../uploads/products');
 if ($uploads_dir === false) {
-    $uploads_dir = dirname(__DIR__, 6) . '/uploads/products';
+    $uploads_dir = dirname(__DIR__, 4) . '/uploads/products';
 }
 if (!is_dir($uploads_dir)) {
     mkdir($uploads_dir, 0755, true);
