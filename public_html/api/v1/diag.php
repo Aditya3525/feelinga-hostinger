@@ -1,36 +1,33 @@
 <?php
 /**
- * TEMPORARY DIAGNOSTIC FILE - DELETE AFTER USE
+ * TEMPORARY DIAGNOSTIC FILE - DELETE AFTER CONFIRMING LOGIN WORKS
  * Access: https://orangered-dogfish-506444.hostingersite.com/api/v1/diag.php
  */
 
-// Load env
+// Search for .env in all likely Hostinger paths
 $envPaths = [
-    dirname(dirname(dirname(__DIR__))) . '/.env',
-    dirname(getcwd()) . '/.env',
-    getcwd() . '/.env',
-    __DIR__ . '/../../../../.env',
+    dirname(__DIR__, 4) . '/.env',                          // public_html/api/v1 -> root
+    dirname(__DIR__, 5) . '/.env',                          // one more level up
+    '/home/' . get_current_user() . '/feelinga-hostinger/.env',
     '/home/' . get_current_user() . '/.env',
+    getcwd() . '/.env',
 ];
 
 $envFound = false;
-$envPath = '';
-foreach ($envPaths as $p) {
-    if (file_exists($p)) {
-        $envFound = true;
-        $envPath = $p;
-        break;
-    }
-}
+$envPath  = '';
+$envVars  = [];
 
-// Parse env manually
-$envVars = [];
-if ($envFound) {
-    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        if ($line[0] === '#' || !str_contains($line, '=')) continue;
-        [$k, $v] = explode('=', $line, 2);
-        $envVars[trim($k)] = trim($v);
+foreach ($envPaths as $p) {
+    if (@file_exists($p)) {
+        $envFound = true;
+        $envPath  = $p;
+        foreach (file($p, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+            $line = trim($line);
+            if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) continue;
+            [$k, $v] = explode('=', $line, 2);
+            $envVars[trim($k)] = trim($v, " \t\n\r\0\x0B\"'");
+        }
+        break;
     }
 }
 
@@ -39,41 +36,36 @@ $dbUser = $envVars['DB_USER'] ?? '';
 $dbPass = $envVars['DB_PASS'] ?? '';
 $dbName = $envVars['DB_NAME'] ?? '';
 
-// Test DB
-$dbStatus = 'not_tested';
-$dbMode   = 'unknown';
+$dbStatus  = 'not_tested';
 $userCount = 0;
-$errorMsg = '';
+$errorMsg  = '';
 
-if ($dbHost && $dbUser && $dbUser !== 'your_db_user') {
-    $dbMode = 'mysql';
+if ($dbHost && $dbUser) {
     try {
         $pdo = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ]);
-        $dbStatus = 'connected';
+        $dbStatus  = 'CONNECTED ✅';
         $userCount = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
     } catch (Exception $e) {
-        $dbStatus = 'error';
+        $dbStatus = 'ERROR ❌';
         $errorMsg = $e->getMessage();
     }
 } else {
-    $dbMode = 'sqlite_fallback';
-    $dbStatus = 'fallback_active';
+    $dbStatus = 'NO ENV VARS FOUND ❌ — .env file is missing or not loaded';
 }
 
 header('Content-Type: application/json');
 echo json_encode([
-    'env_file_found'  => $envFound,
-    'env_file_path'   => $envFound ? $envPath : 'NOT FOUND - tried: ' . implode(', ', $envPaths),
-    'db_mode'         => $dbMode,
-    'db_host'         => $dbHost ?: '(empty)',
-    'db_user'         => $dbUser ?: '(empty)',
-    'db_name'         => $dbName ?: '(empty)',
-    'db_status'       => $dbStatus,
-    'user_count'      => $userCount,
-    'error'           => $errorMsg,
-    'php_version'     => PHP_VERSION,
-    'cwd'             => getcwd(),
-    'script_dir'      => __DIR__,
+    'env_file_found' => $envFound,
+    'env_file_path'  => $envFound ? $envPath : 'NOT FOUND — searched: ' . implode(' | ', $envPaths),
+    'db_host'        => $dbHost ?: '(empty)',
+    'db_user'        => $dbUser ?: '(empty)',
+    'db_name'        => $dbName ?: '(empty)',
+    'db_status'      => $dbStatus,
+    'user_count_in_db' => $userCount,
+    'error'          => $errorMsg ?: null,
+    'php_version'    => PHP_VERSION,
+    'server_cwd'     => getcwd(),
+    'this_file_dir'  => __DIR__,
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
