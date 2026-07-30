@@ -1495,6 +1495,22 @@
     gap: 6px;
 }
 
+.admin-form-advanced-toggle {
+    display: flex;
+    justify-content: center;
+    margin: var(--space-xl) 0 var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--color-border);
+}
+
+.admin-form-advanced-content {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
 .admin-form-actions {
     grid-column: 1 / -1;
     display: flex;
