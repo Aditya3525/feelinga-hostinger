@@ -6,10 +6,7 @@ declare(strict_types=1);
  * Reference: backend/src/modules/upload/routes.ts (96 lines)
  */
 
-$uploads_dir = realpath(__DIR__ . '/../../../../uploads/products');
-if ($uploads_dir === false) {
-    $uploads_dir = dirname(__DIR__, 4) . '/uploads/products';
-}
+$uploads_dir = dirname(__DIR__, 6) . '/feelinga_uploads';
 if (!is_dir($uploads_dir)) {
     mkdir($uploads_dir, 0755, true);
 }
@@ -63,7 +60,7 @@ function upload_images(): void
             json_error("Failed to save file: {$filename}", 500);
         }
 
-        $urls[] = '/uploads/products/' . $filename;
+        $urls[] = '/api/v1/upload/images/' . $filename;
     }
 
     echo json_encode([
@@ -97,4 +94,36 @@ function upload_delete_image(): void
     }
 
     json_success(['message' => 'Image deleted']);
+}
+
+function upload_serve_image(string $filename): void
+{
+    if (str_contains($filename, '..') || str_contains($filename, '/') || str_contains($filename, '\\')) {
+        http_response_code(400);
+        exit;
+    }
+
+    global $uploads_dir;
+    $filePath = $uploads_dir . '/' . $filename;
+
+    if (!file_exists($filePath)) {
+        http_response_code(404);
+        exit;
+    }
+
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $mimeTypes = [
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        'gif' => 'image/gif',
+        'avif' => 'image/avif'
+    ];
+    $contentType = $mimeTypes[$ext] ?? 'application/octet-stream';
+
+    header('Content-Type: ' . $contentType);
+    header('Cache-Control: public, max-age=31536000'); // 1 year cache
+    readfile($filePath);
+    exit;
 }
