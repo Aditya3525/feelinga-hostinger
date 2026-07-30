@@ -13,7 +13,7 @@ import { resolveProductImageUrl } from '../../utils/image';
 import type { ChangeEvent } from 'react';
 
 type ShopSort = 'popular' | 'newest' | 'price-asc' | 'price-desc';
-type FilterGroupKey = 'type' | 'mood' | 'origin' | 'price';
+type FilterGroupKey = 'type' | 'origin' | 'price';
 
 type ShopFilters = Record<FilterGroupKey, string[]>;
 
@@ -23,7 +23,7 @@ type ShopProduct = {
     name: string;
     type: string;
     typeName?: string;
-    moods: string[];
+
     origin: string;
     originLabel: string;
     price: number;
@@ -51,7 +51,7 @@ function ShopInner() {
     const searchParams = useSearchParams();
     const [products, setProducts] = useState<ShopProduct[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filters, setFilters] = useState<ShopFilters>({ type: [], mood: [], origin: [], price: [] });
+    const [filters, setFilters] = useState<ShopFilters>({ type: [], origin: [], price: [] });
     const [sort, setSort] = useState<ShopSort>('popular');
     const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
     const [page, setPage] = useState(1);
@@ -61,11 +61,8 @@ function ShopInner() {
     const [error, setError] = useState<string | null>(null);
     const LIMIT = 12;
 
-    // Sync mood and search query from URL params
+    // Sync search query and type from URL params
     useEffect(() => {
-        const moodParam = searchParams.get('mood');
-        if (moodParam) setFilters(prev => ({ ...prev, mood: [moodParam] }));
-        else setFilters(prev => ({ ...prev, mood: [] }));
         const qParam = searchParams.get('q');
         setSearchQuery(qParam || '');
         // Support direct type param from footer links (e.g. ?type=Green+Tea)
@@ -115,7 +112,7 @@ function ShopInner() {
                     const typeMap: Record<string, string> = { green: 'Green Tea', black: 'Black Tea', white: 'White Tea', oolong: 'Oolong', herbal: 'Herbal', chai: 'Masala Chai' };
                     if (typeMap[filters.type[0]]) params.set('type', typeMap[filters.type[0]]);
                 }
-                filters.mood.forEach(m => params.append('mood', m));
+
                 if (searchQuery) params.set('q', searchQuery);
                 if (filters.price.length === 1) {
                     if (filters.price[0] === 'under500') params.set('maxPrice', '500');
@@ -205,7 +202,6 @@ function ShopInner() {
 
     const filterGroups: FilterGroup[] = [
         { key: 'type', title: 'Tea Type', options: [{ value: 'green', label: 'Green Tea' }, { value: 'black', label: 'Black Tea' }, { value: 'white', label: 'White Tea' }, { value: 'oolong', label: 'Oolong' }, { value: 'herbal', label: 'Herbal & Tisane' }, { value: 'chai', label: 'Masala Chai' }] },
-        { key: 'mood', title: 'Mood / Benefit', options: [{ value: 'energize', label: 'Energize' }, { value: 'relax', label: 'Relax' }, { value: 'focus', label: 'Focus' }, { value: 'detox', label: 'Detox' }, { value: 'glow', label: 'Glow' }] },
         { key: 'origin', title: 'Origin', options: [{ value: 'darjeeling', label: 'Darjeeling' }, { value: 'assam', label: 'Assam' }, { value: 'nilgiri', label: 'Nilgiri' }, { value: 'kangra', label: 'Kangra' }] },
         { key: 'price', title: 'Price Range', options: [{ value: 'under500', label: 'Under ₹500' }, { value: '500-999', label: '₹500 – ₹999' }, { value: '1000-plus', label: '₹1,000+' }] },
     ];

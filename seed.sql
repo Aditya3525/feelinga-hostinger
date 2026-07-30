@@ -2,8 +2,8 @@
 
 -- 1. Admin and Test Customer
 INSERT IGNORE INTO users (name, email, password, role, email_verified) VALUES 
-('Admin', 'admin@feelinga.com', '$2a$10$v7g2H.6Zq73i/T/jA2ZpM.B5x5N/fE6g2uC4R7/1mI9u.wY1XqFHe', 'admin', 1),
-('Test User', 'test@example.com', '$2a$10$v7g2H.6Zq73i/T/jA2ZpM.B5x5N/fE6g2uC4R7/1mI9u.wY1XqFHe', 'customer', 1);
+('Admin', 'admin@feelinga.com', '$2b$10$Z1prqNqybF6K4TjekFV0heQI6qV6KrmlSvFm4DJVkRfFvJhqjCz2O', 'admin', 1),
+('Test User', 'test@example.com', '$2b$10$Z1prqNqybF6K4TjekFV0heQI6qV6KrmlSvFm4DJVkRfFvJhqjCz2O', 'customer', 1);
 
 -- 2. Products
 INSERT IGNORE INTO products (slug, name, type, description, short_description, price_100g, price_200g, moods, origin, caffeine, images, in_stock, stock, is_best_seller, is_new_arrival, rating, review_count) VALUES

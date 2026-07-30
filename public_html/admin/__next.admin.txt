@@ -2,4 +2,4 @@
 2:I[7121,[],""]
 3:I[4581,[],""]
 :HL["/_next/static/css/b80c7da68cdc9d79.css","style"]
-0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/b80c7da68cdc9d79.css","precedence":"next"}]],["$","section",null,{"className":"admin-route-shell","children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"0ApxcXGydmY7XIb9qNaYV"}
+0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/b80c7da68cdc9d79.css","precedence":"next"}]],["$","section",null,{"className":"admin-route-shell","children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"-qw4Ygch8W4yMnuoaKwUK"}

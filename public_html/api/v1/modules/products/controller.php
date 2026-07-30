@@ -22,7 +22,7 @@ function products_list(): void
     }
 
     $type = query_string('type');
-    $mood = isset($_GET['mood']) ? (is_array($_GET['mood']) ? $_GET['mood'] : [$_GET['mood']]) : null;
+    $mood = null; // Mood filter removed — kept for API compat
     $caffeine = query_string('caffeine');
     $minPrice = query_string('minPrice');
     $maxPrice = query_string('maxPrice');
@@ -46,14 +46,6 @@ function products_list(): void
     if ($origin) { $where[] = 'origin LIKE ?'; $params[] = '%' . $origin . '%'; }
     if ($q) { $like = '%' . $q . '%'; $where[] = '(name LIKE ? OR type LIKE ? OR description LIKE ?)'; $params[] = $like; $params[] = $like; $params[] = $like; }
 
-    if ($mood) {
-        $moodConditions = [];
-        foreach ($mood as $m) {
-            $moodConditions[] = 'moods LIKE ?';
-            $params[] = '%"moods":%' . $m . '%';
-        }
-        $where[] = '(' . implode(' OR ', $moodConditions) . ')';
-    }
 
     $whereClause = implode(' AND ', $where);
 

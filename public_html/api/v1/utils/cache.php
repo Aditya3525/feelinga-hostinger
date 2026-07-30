@@ -63,12 +63,9 @@ function cache_invalidate(string $prefix): void
     if ($files === false) {
         return;
     }
-    // We can't efficiently check prefixes on md5 hashes,
-    // so just clear all cache when products change
-    if ($prefix === 'products:') {
-        foreach ($files as $file) {
-            @unlink($file);
-        }
+    // Clear all cache files — catches products:*, admin:dashboard, etc.
+    foreach ($files as $file) {
+        @unlink($file);
     }
 }
 

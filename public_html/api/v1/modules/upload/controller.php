@@ -22,7 +22,7 @@ function upload_images(): void
 
     $files = $_FILES['images'];
     $count = is_array($files['name']) ? count($files['name']) : 1;
-    if ($count > MAX_UPLOAD_FILES) json_error("Maximum {$MAX_UPLOAD_FILES} files allowed", 400);
+    if ($count > MAX_UPLOAD_FILES) json_error('Maximum ' . MAX_UPLOAD_FILES . ' files allowed', 400);
 
     global $uploads_dir;
     $urls = [];

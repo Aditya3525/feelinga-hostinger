@@ -28,12 +28,8 @@ function admin_dashboard(): void
     $recentOrdersRaw = $db->query("SELECT o.*, u.name as user_name, u.email as user_email FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC LIMIT 5")->fetchAll();
     $recentOrders = array_map('format_order', $recentOrdersRaw);
 
-    global $db_type;
-    if ($db_type === 'mysql') {
-        $monthlyRaw = $db->query("SELECT YEAR(created_at) as y, MONTH(created_at) as m, SUM(total) as revenue, COUNT(*) as orders FROM orders GROUP BY y, m ORDER BY y DESC, m DESC LIMIT 6")->fetchAll();
-    } else {
-        $monthlyRaw = $db->query("SELECT strftime('%Y', created_at) as y, strftime('%m', created_at) as m, SUM(total) as revenue, COUNT(*) as orders FROM orders GROUP BY y, m ORDER BY y DESC, m DESC LIMIT 6")->fetchAll();
-    }
+    // MySQL only — YEAR() / MONTH() functions
+    $monthlyRaw = $db->query("SELECT YEAR(created_at) as y, MONTH(created_at) as m, SUM(total) as revenue, COUNT(*) as orders FROM orders GROUP BY y, m ORDER BY y DESC, m DESC LIMIT 6")->fetchAll();
 
     $monthlyRevenue = [];
     foreach ($monthlyRaw as $r) {

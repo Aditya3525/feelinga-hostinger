@@ -26,10 +26,8 @@ function orders_create(): void
         // Fetch products with lock
         $productIds = array_unique(array_map(fn($i) => (int)$i['productId'], $items));
         $ph = implode(',', array_fill(0, count($productIds), '?'));
-        // SQLite doesn't support FOR UPDATE; WAL journal_mode handles concurrency
-        global $db_type;
-        $lockClause = ($db_type === 'mysql') ? ' FOR UPDATE' : '';
-        $stmt = $db->prepare("SELECT * FROM products WHERE id IN ({$ph}){$lockClause}");
+        // MySQL: use FOR UPDATE for row-level lock during concurrent order creation
+        $stmt = $db->prepare("SELECT * FROM products WHERE id IN ({$ph}) FOR UPDATE");
         $stmt->execute($productIds);
         $products = $stmt->fetchAll();
         $productMap = [];
@@ -188,8 +186,6 @@ function orders_list(): void
     $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
     $offset = ($page - 1) * $limit;
 
-    $total = (int)$db->prepare("SELECT COUNT(*) FROM orders o LEFT JOIN users u ON o.user_id = u.id {$whereClause}")->execute($params) ? (int)$db->prepare("SELECT COUNT(*) FROM orders o LEFT JOIN users u ON o.user_id = u.id {$whereClause}")->execute($params) : 0;
-    // Re-do the count properly
     $countStmt = $db->prepare("SELECT COUNT(*) FROM orders o LEFT JOIN users u ON o.user_id = u.id {$whereClause}");
     $countStmt->execute($params);
     $total = (int)$countStmt->fetchColumn();

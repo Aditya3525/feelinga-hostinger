@@ -236,33 +236,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* 2. SHOP BY MOOD */}
-            <section className="section" id="moods">
-                <div className="container">
-                    <SectionHeader
-                        className="fade-in"
-                        overline="Find Your Blend"
-                        title="Shop by Mood"
-                        description="Let your mood guide you to the perfect cup."
-                    />
-                    <div className="mood-grid mood-grid--stagger-1 fade-in">
-                        {[
-                            { mood: 'energize', icon: 'flame', title: 'Energize', desc: "Start your day with vibrant, uplifting blends." },
-                            { mood: 'relax', icon: 'leaf', title: 'Relax', desc: "Soothing teas that melt away the day's stress." },
-                            { mood: 'focus', icon: 'brain', title: 'Focus', desc: 'Sharpen your clarity and stay centered.' },
-                            { mood: 'detox', icon: 'drop', title: 'Detox', desc: 'Light, detoxifying infusions for renewal.' },
-                            { mood: 'glow', icon: 'sparkles', title: 'Glow', desc: 'Nourish your skin and radiate from within.' },
-                        ].map(m => (
-                            <Link href={`/shop?mood=${m.mood}`} className="mood-card" key={m.mood}>
-                                <div className="mood-card__icon"><AppIcon name={m.icon} size={26} aria-hidden /></div>
-                                <h4>{m.title}</h4>
-                                <p>{m.desc}</p>
-                                <span className="btn btn--ghost btn--sm">Explore</span>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
+
 
             {/* 3. PRODUCT TABS */}
             <section className="section section--alt">
