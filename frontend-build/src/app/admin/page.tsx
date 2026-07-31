@@ -686,8 +686,6 @@ export default function Admin() {
         if (!files || files.length === 0) return;
         setUploading(true);
         try {
-            const userStr = localStorage.getItem('feelinga_user');
-            if (!userStr) throw new Error('Not authenticated');
             const formData = new FormData();
             for (let i = 0; i < files.length; i++) formData.append('images', files[i]);
             const res = await fetch('/api/v1/upload/images', {
@@ -696,11 +694,15 @@ export default function Admin() {
                 body: formData,
             });
             const data = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(data.message || 'Upload failed');
-            const uploadedUrls = Array.isArray(data?.data?.urls)
-                ? data.data.urls.map((url: string) => resolveProductImageUrl(url))
+            if (!res.ok) {
+                throw new Error(data.message || `Upload failed (${res.status}). Please make sure you are logged in.`);
+            }
+            const uploadedUrls: string[] = Array.isArray(data?.data?.urls)
+                ? data.data.urls
                 : [];
-            setProductForm(prev => ({ ...prev, images: [...prev.images, ...uploadedUrls] }));
+            if (uploadedUrls.length === 0) throw new Error('No URLs returned from upload.');
+            setProductForm(prev => ({ ...prev, images: [...(Array.isArray(prev.images) ? prev.images : []), ...uploadedUrls] }));
+            showToast(`${uploadedUrls.length} image(s) uploaded!`, 'success');
         } catch (err: any) {
             showToast(err.message || 'Upload failed', 'error');
         } finally {
@@ -735,31 +737,23 @@ export default function Admin() {
             showToast('Please provide a valid product slug.', 'error');
             return;
         }
-        if (!normalizedOrigin) {
-            showToast('Product origin is required.', 'error');
-            return;
-        }
-        if (!normalizedDescription || normalizedDescription.length < 10) {
-            showToast('Description should be at least 10 characters.', 'error');
+        if (!normalizedDescription || normalizedDescription.length < 3) {
+            showToast('Description must be at least 3 characters.', 'error');
             return;
         }
 
         const parsedSizes = (productForm.sizes || []).map((s: any) => ({
-            weight: s.weight.trim(),
+            weight: String(s.weight || '').trim(),
             price: Number(s.price)
         })).filter((s: any) => s.weight && Number.isFinite(s.price) && s.price > 0);
 
         if (parsedSizes.length === 0) {
-            showToast('Please add at least one valid size and price.', 'error');
+            showToast('Please add at least one valid size with a price greater than 0.', 'error');
             return;
         }
 
         if (!Number.isFinite(normalizedStock) || normalizedStock < 0) {
             showToast('Stock must be 0 or higher.', 'error');
-            return;
-        }
-        if (!Array.isArray(productForm.images) || productForm.images.length === 0) {
-            showToast('Please upload at least one product image.', 'error');
             return;
         }
 
@@ -775,22 +769,21 @@ export default function Admin() {
             slug: normalizedSlug,
             type: productForm.type,
             description: normalizedDescription,
-            shortDescription: productForm.shortDescription.trim() || undefined,
-            origin: normalizedOrigin,
+            shortDescription: (productForm.shortDescription || '').trim() || undefined,
+            origin: normalizedOrigin || 'India',
             sizes: parsedSizes,
             stock: normalizedStock,
-            caffeine: productForm.caffeine,
+            caffeine: productForm.caffeine || 'medium',
             tastingNotes,
             tags,
             brewingInstructions: {
-                temperature: productForm.brewTemp.trim() || undefined,
-                steepTime: productForm.brewSteep.trim() || undefined,
-                amount: productForm.brewAmount.trim() || undefined,
+                temperature: (productForm.brewTemp || '').trim() || undefined,
+                steepTime: (productForm.brewSteep || '').trim() || undefined,
+                amount: (productForm.brewAmount || '').trim() || undefined,
             },
-            images: productForm.images,
-
-            isBestSeller: productForm.isBestSeller,
-            isNewArrival: productForm.isNewArrival,
+            images: Array.isArray(productForm.images) ? productForm.images : [],
+            isBestSeller: Boolean(productForm.isBestSeller),
+            isNewArrival: Boolean(productForm.isNewArrival),
             inStock: normalizedStock > 0,
         };
         try {

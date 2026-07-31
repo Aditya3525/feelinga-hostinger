@@ -382,14 +382,18 @@ export function ProductsTab({
                             </section>
 
                             <section className="admin-form-section">
-                                <h4 className="admin-form-section__title">Product Images</h4>
-                                {productForm.images.length > 0 && (
-                                    <div className="admin-product-images">
+                                <h4 className="admin-form-section__title">Product Images {Array.isArray(productForm.images) && productForm.images.length > 0 && <span style={{color:'green',fontSize:'13px',fontWeight:500}}>({productForm.images.length} uploaded ✓)</span>}</h4>
+                                {Array.isArray(productForm.images) && productForm.images.length > 0 && (
+                                    <div style={{display:'flex',flexWrap:'wrap',gap:'10px',marginBottom:'12px'}}>
                                         {productForm.images.map((url: string, i: number) => (
-                                            <div key={i} className="admin-product-images__thumb">
+                                            <div key={i} style={{position:'relative',width:'80px',height:'80px'}}>
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img src={url} alt={`Product ${i + 1}`} width={72} height={72} className="admin-product-images__img" style={{objectFit:'cover',width:'72px',height:'72px',borderRadius:'6px'}} />
-                                                <button type="button" className="admin-product-images__remove" onClick={() => removeImage(i)}><AppIcon name="xCircle" size={12} aria-hidden /></button>
+                                                <img src={url} alt={`Product ${i + 1}`} style={{width:'80px',height:'80px',objectFit:'cover',borderRadius:'8px',border:'2px solid #d4a853'}} />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(i)}
+                                                    style={{position:'absolute',top:'-6px',right:'-6px',background:'#e53e3e',color:'white',border:'none',borderRadius:'50%',width:'20px',height:'20px',cursor:'pointer',fontSize:'12px',lineHeight:'20px',textAlign:'center',padding:0}}
+                                                >×</button>
                                             </div>
                                         ))}
                                     </div>
@@ -410,7 +414,7 @@ export function ProductsTab({
                                         onChange={(e) => uploadImages(e.target.files)}
                                     />
                                     {uploading ? (
-                                        <span className="admin-upload-dropzone__uploading">Uploading...</span>
+                                        <span className="admin-upload-dropzone__uploading">⏳ Uploading...</span>
                                     ) : (
                                         <>
                                             <div className="admin-upload-dropzone__icon"><AppIcon name="archive" size={20} aria-hidden /></div>
@@ -419,6 +423,7 @@ export function ProductsTab({
                                     )}
                                 </div>
                             </section>
+
 
                             <div className="admin-form-advanced-toggle">
                                 <button type="button" onClick={() => setShowAdvanced(!showAdvanced)} className="btn btn--outline btn--sm">
