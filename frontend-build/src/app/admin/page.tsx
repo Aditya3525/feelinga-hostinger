@@ -109,8 +109,8 @@ export default function Admin() {
     const [showProductForm, setShowProductForm] = useState(false);
     const [editingProduct, setEditingProduct] = useState<AdminRecord | null>(null);
     const emptyProduct: AdminRecord = {
-        name: '', slug: '', type: 'Black Tea', description: '', shortDescription: '', origin: '',
-        'price50g': '', 'price100g': '', 'price200g': '',
+        name: '', slug: '', type: 'Black Tea', description: '', shortDescription: '', origin: 'Unknown',
+        sizes: [{ weight: '100g', price: '' }],
         stock: 100, caffeine: 'medium', tastingNotes: '', tags: '', images: [] as string[],
         isBestSeller: false, isNewArrival: true, inStock: true,
         brewTemp: '', brewSteep: '', brewAmount: '',
@@ -647,10 +647,12 @@ export default function Admin() {
             type: p.type || 'Black Tea',
             description: p.description || '',
             shortDescription: p.shortDescription || '',
-            origin: p.origin || '',
-            'price50g': p.prices?.['50g'] || '',
-            'price100g': p.prices?.['100g'] || '',
-            'price200g': p.prices?.['200g'] || '',
+            origin: p.origin || 'Unknown',
+            sizes: p.sizes?.length > 0 ? p.sizes.map((s: any) => ({ weight: s.weight, price: String(s.price) })) : [
+                ...(p.prices?.['50g'] ? [{ weight: '50g', price: String(p.prices['50g']) }] : []),
+                { weight: '100g', price: String(p.prices?.['100g'] || '') },
+                ...(p.prices?.['200g'] ? [{ weight: '200g', price: String(p.prices['200g']) }] : []),
+            ],
             stock: p.stock ?? 100,
             caffeine: p.caffeine || 'medium',
             tastingNotes: (p.tastingNotes || []).join(', '),
@@ -746,18 +748,17 @@ export default function Admin() {
             showToast('Description should be at least 10 characters.', 'error');
             return;
         }
-        if (!Number.isFinite(price100g) || price100g <= 0) {
-            showToast('100g price must be a valid positive number.', 'error');
+
+        const parsedSizes = (productForm.sizes || []).map((s: any) => ({
+            weight: s.weight.trim(),
+            price: Number(s.price)
+        })).filter((s: any) => s.weight && Number.isFinite(s.price) && s.price > 0);
+
+        if (parsedSizes.length === 0) {
+            showToast('Please add at least one valid size and price.', 'error');
             return;
         }
-        if (price50g !== null && (!Number.isFinite(price50g) || price50g <= 0)) {
-            showToast('50g price must be a valid positive number.', 'error');
-            return;
-        }
-        if (price200g !== null && (!Number.isFinite(price200g) || price200g <= 0)) {
-            showToast('200g price must be a valid positive number.', 'error');
-            return;
-        }
+
         if (!Number.isFinite(normalizedStock) || normalizedStock < 0) {
             showToast('Stock must be 0 or higher.', 'error');
             return;
@@ -781,11 +782,7 @@ export default function Admin() {
             description: normalizedDescription,
             shortDescription: productForm.shortDescription.trim() || undefined,
             origin: normalizedOrigin,
-            prices: {
-                ...(price50g !== null ? { '50g': price50g } : {}),
-                '100g': price100g,
-                ...(price200g !== null ? { '200g': price200g } : {}),
-            },
+            sizes: parsedSizes,
             stock: normalizedStock,
             caffeine: productForm.caffeine,
             tastingNotes,

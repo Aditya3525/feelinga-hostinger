@@ -122,7 +122,7 @@ export default function Home() {
                     slug: p.slug,
                     name: p.name,
                     type: p.type,
-                    price: p.prices?.['100g'] || 0,
+                    price: p.sizes?.length > 0 ? p.sizes[0].price : (p.prices?.['100g'] || p.price || 0),
                     img: resolveProductImageUrl(p.images?.[0], '/images/darjeeling-tea.png'),
                     note: p.shortDescription || (p.description ? p.description.substring(0, 60) + '...' : ''),
                     reviews: p.reviewCount || 0,

@@ -146,14 +146,16 @@ function ShopInner() {
 
                         origin: p.origin?.split(',')[0]?.trim().toLowerCase() || '',
                         originLabel: p.origin?.split(',')[0]?.trim() || '',
-                        price: p.prices?.['100g'] || 0,
-                        sizePrices: [
-                            ['50g', p.prices?.['50g']],
-                            ['100g', p.prices?.['100g']],
-                            ['200g', p.prices?.['200g']],
-                        ]
-                            .filter(([, value]) => Number.isFinite(Number(value)) && Number(value) > 0)
-                            .map(([size, value]) => ({ size, value: Number(value) })),
+                        price: p.sizes?.length > 0 ? p.sizes[0].price : (p.prices?.['100g'] || p.price || 0),
+                        sizePrices: p.sizes?.length > 0
+                            ? p.sizes.map((s: any) => ({ size: s.weight, value: Number(s.price) }))
+                            : [
+                                ['50g', p.prices?.['50g']],
+                                ['100g', p.prices?.['100g']],
+                                ['200g', p.prices?.['200g']],
+                            ]
+                                .filter(([, value]) => Number.isFinite(Number(value)) && Number(value) > 0)
+                                .map(([size, value]) => ({ size, value: Number(value) })),
                         img: resolveProductImageUrl(p.images?.[0], '/images/products/darjeeling-ff.jpg'),
                         note: p.shortDescription || (p.description ? p.description.substring(0, 70) + '...' : ''),
                         reviews: p.reviewCount || 0,

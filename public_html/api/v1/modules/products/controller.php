@@ -178,6 +178,26 @@ function products_create(): void
     $stock = isset($body['stock']) ? (int)$body['stock'] : 100;
     $inStock = $stock > 0 ? 1 : 0;
 
+    $pricingVariants = null;
+    if (isset($body['sizes']) && is_array($body['sizes'])) {
+        $pricingVariants = json_encode($body['sizes']);
+    } else {
+        // Fallback for old clients
+        $sizes = [];
+        if (isset($body['prices']['50g'])) $sizes[] = ['weight' => '50g', 'price' => (float)$body['prices']['50g']];
+        if (isset($body['prices']['100g'])) $sizes[] = ['weight' => '100g', 'price' => (float)$body['prices']['100g']];
+        if (isset($body['prices']['200g'])) $sizes[] = ['weight' => '200g', 'price' => (float)$body['prices']['200g']];
+        if (!empty($sizes)) $pricingVariants = json_encode($sizes);
+    }
+    
+    // Determine a base price for sorting
+    $basePrice = 0;
+    if (isset($body['prices']['100g'])) {
+        $basePrice = (float)$body['prices']['100g'];
+    } elseif (isset($body['sizes']) && is_array($body['sizes']) && count($body['sizes']) > 0) {
+        $basePrice = (float)$body['sizes'][0]['price'];
+    }
+
     $data = [
         $slug,
         $body['name'] ?? '',
@@ -185,8 +205,9 @@ function products_create(): void
         $body['description'] ?? '',
         $body['shortDescription'] ?? null,
         isset($body['prices']['50g']) ? (float)$body['prices']['50g'] : null,
-        isset($body['prices']['100g']) ? (float)$body['prices']['100g'] : 0,
+        $basePrice,
         isset($body['prices']['200g']) ? (float)$body['prices']['200g'] : null,
+        $pricingVariants,
         isset($body['moods']) ? json_encode($body['moods']) : null,
         $body['origin'] ?? '',
         $body['caffeine'] ?? 'medium',
@@ -205,7 +226,7 @@ function products_create(): void
 
     if ($existing && $existing['deleted_at']) {
         // Restore soft-deleted product
-        $stmt = $db->prepare('UPDATE products SET slug=?, name=?, type=?, description=?, short_description=?, price_50g=?, price_100g=?, price_200g=?, moods=?, origin=?, caffeine=?, tasting_notes=?, brewing_temperature=?, brewing_steep_time=?, brewing_amount=?, brewing_steps=?, images=?, stock=?, in_stock=?, is_best_seller=?, is_new_arrival=?, tags=?, deleted_at=NULL WHERE id=?');
+        $stmt = $db->prepare('UPDATE products SET slug=?, name=?, type=?, description=?, short_description=?, price_50g=?, price_100g=?, price_200g=?, pricing_variants=?, moods=?, origin=?, caffeine=?, tasting_notes=?, brewing_temperature=?, brewing_steep_time=?, brewing_amount=?, brewing_steps=?, images=?, stock=?, in_stock=?, is_best_seller=?, is_new_arrival=?, tags=?, deleted_at=NULL WHERE id=?');
         $data[] = $existing['id'];
         $stmt->execute($data);
         cache_invalidate('products:');
@@ -215,7 +236,7 @@ function products_create(): void
         json_error('A product with this slug already exists. Please use a different name or slug.', 409);
     } else {
         $placeholders = str_repeat('?,', count($data) - 1) . '?';
-        $stmt = $db->prepare("INSERT INTO products (slug, name, type, description, short_description, price_50g, price_100g, price_200g, moods, origin, caffeine, tasting_notes, brewing_temperature, brewing_steep_time, brewing_amount, brewing_steps, images, stock, in_stock, is_best_seller, is_new_arrival, tags) VALUES ({$placeholders})");
+        $stmt = $db->prepare("INSERT INTO products (slug, name, type, description, short_description, price_50g, price_100g, price_200g, pricing_variants, moods, origin, caffeine, tasting_notes, brewing_temperature, brewing_steep_time, brewing_amount, brewing_steps, images, stock, in_stock, is_best_seller, is_new_arrival, tags) VALUES ({$placeholders})");
         $stmt->execute($data);
         $newId = (int) $db->lastInsertId();
         cache_invalidate('products:');
@@ -237,7 +258,7 @@ function products_update(string $id): void
     $body = get_request_body();
     $db = get_db();
 
-    $allowed = ['name','type','description','short_description','price_50g','price_100g','price_200g','moods','origin','caffeine','tasting_notes','brewing_temperature','brewing_steep_time','brewing_amount','brewing_steps','images','stock','in_stock','is_best_seller','is_new_arrival','tags','slug'];
+    $allowed = ['name','type','description','short_description','price_50g','price_100g','price_200g','pricing_variants','moods','origin','caffeine','tasting_notes','brewing_temperature','brewing_steep_time','brewing_amount','brewing_steps','images','stock','in_stock','is_best_seller','is_new_arrival','tags','slug'];
 
     $updates = [];
     $params = [];
@@ -254,6 +275,15 @@ function products_update(string $id): void
         $dbKey = $fieldMap[$key] ?? $key;
         if ($dbKey === null) continue;
         // Convert camelCase for prices
+        if ($key === 'sizes') {
+            $updates[] = 'pricing_variants = ?';
+            $params[] = json_encode($value);
+            if (is_array($value) && count($value) > 0) {
+                $updates[] = 'price_100g = ?';
+                $params[] = (float)$value[0]['price'];
+            }
+            continue;
+        }
         if ($key === 'prices') {
             if (isset($value['50g'])) { $updates[] = 'price_50g = ?'; $params[] = (float)$value['50g']; }
             if (isset($value['100g'])) { $updates[] = 'price_100g = ?'; $params[] = (float)$value['100g']; }
@@ -380,6 +410,7 @@ function format_product(array $p): array
             '100g' => (float) $p['price_100g'],
             '200g' => $p['price_200g'] !== null ? (float)$p['price_200g'] : null,
         ],
+        'sizes' => json_decode($p['pricing_variants'] ?? '[]', true) ?: [],
         'price' => (float) $p['price_100g'],
         'moods' => json_decode($p['moods'] ?? '[]', true) ?: [],
         'origin' => $p['origin'],

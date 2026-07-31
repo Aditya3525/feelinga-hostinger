@@ -346,7 +346,33 @@ export function ProductsTab({
                                             {['Black Tea', 'Green Tea', 'White Tea', 'Oolong', 'Herbal', 'Herbal Infusion', 'Masala Chai', 'Matcha'].map(t => <option key={t} value={t}>{t}</option>)}
                                         </select>
                                     </div>
-                                    <div><label className="admin-form-label">Price 100g (₹) *</label><input className="admin-form-control" type="number" min={0} step="0.01" required value={productForm['price100g']} onChange={e => handleProductFormChange('price100g', e.target.value)} /></div>
+                                    <div className="admin-form-grid__span-all">
+                                        <label className="admin-form-label">Sizes & Pricing *</label>
+                                        {(productForm.sizes || []).map((s: any, idx: number) => (
+                                            <div key={idx} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                                                <input className="admin-form-control" type="text" placeholder="Weight (e.g. 100g)" required value={s.weight} onChange={e => {
+                                                    const newSizes = [...(productForm.sizes || [])];
+                                                    newSizes[idx] = { ...newSizes[idx], weight: e.target.value };
+                                                    handleProductFormChange('sizes', newSizes);
+                                                }} />
+                                                <input className="admin-form-control" type="number" min={0} step="0.01" placeholder="Price (₹)" required value={s.price} onChange={e => {
+                                                    const newSizes = [...(productForm.sizes || [])];
+                                                    newSizes[idx] = { ...newSizes[idx], price: e.target.value };
+                                                    handleProductFormChange('sizes', newSizes);
+                                                }} />
+                                                {(productForm.sizes || []).length > 1 && (
+                                                    <button type="button" className="btn btn--outline btn--sm" style={{ padding: '0 12px' }} onClick={() => {
+                                                        const newSizes = [...(productForm.sizes || [])];
+                                                        newSizes.splice(idx, 1);
+                                                        handleProductFormChange('sizes', newSizes);
+                                                    }}>X</button>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <button type="button" className="btn btn--outline btn--sm" style={{ marginTop: '4px' }} onClick={() => {
+                                            handleProductFormChange('sizes', [...(productForm.sizes || []), { weight: '', price: '' }]);
+                                        }}>+ Add Size</button>
+                                    </div>
                                     <div>
                                         <label className="admin-form-label">Stock</label>
                                         <input className="admin-form-control" type="number" min={0} value={productForm.stock} onChange={e => handleProductFormChange('stock', e.target.value)} />
@@ -474,13 +500,13 @@ export function ProductsTab({
 
             <div className="admin__table-wrap">
                 <table className="admin__table">
-                    <thead><tr><th>Name</th><th>Type</th><th>Price (100g)</th><th>Stock</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>Name</th><th>Type</th><th>Price (Starting)</th><th>Stock</th><th>Actions</th></tr></thead>
                     <tbody>
                         {products.map(p => (
                             <tr key={p._id}>
                                 <td>{p.name}</td>
                                 <td>{p.type}</td>
-                                <td>₹{p.prices?.['100g'] || '-'}</td>
+                                <td>₹{p.sizes && p.sizes.length > 0 ? p.sizes[0].price : p.price}</td>
                                 <td>{p.stock}</td>
                                 <td className="admin-table-actions">
                                     <button className="btn btn--ghost btn--sm" onClick={() => openEditProduct(p)}>Edit</button>

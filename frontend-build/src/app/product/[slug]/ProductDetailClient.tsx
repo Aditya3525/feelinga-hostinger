@@ -24,6 +24,7 @@ export interface ProductData {
         '200g'?: number | null;
         [key: string]: number | null | undefined;
     };
+    sizes?: { weight: string; price: number }[];
     price: number;
 
     origin: string;
@@ -359,6 +360,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                             '100g': data.prices?.['100g'] ?? data.price ?? fallback.prices['100g'],
                             '200g': data.prices?.['200g'] ?? fallback.prices['200g'],
                         },
+                        sizes: Array.isArray(data.sizes) ? data.sizes : undefined,
                         price: data.prices?.['100g'] ?? data.price ?? fallback.price,
 
                         origin: data.origin || fallback.origin,
@@ -393,13 +395,22 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
     }, [slug]);
 
     // Available size options with valid non-null prices
-    const sizeOptions = [
-        { size: '50g', label: '50g Sampler', price: product.prices?.['50g'] },
-        { size: '100g', label: '100g Standard', price: product.prices?.['100g'] },
-        { size: '200g', label: '200g Value Pack', price: product.prices?.['200g'] },
-    ].filter(opt => opt.price != null && Number(opt.price) > 0) as Array<{ size: string; label: string; price: number }>;
+    const sizeOptions = (product.sizes && product.sizes.length > 0)
+        ? product.sizes.map((s: any) => ({ size: s.weight, label: s.weight, price: s.price }))
+        : [
+            { size: '50g', label: '50g Sampler', price: product.prices?.['50g'] },
+            { size: '100g', label: '100g Standard', price: product.prices?.['100g'] },
+            { size: '200g', label: '200g Value Pack', price: product.prices?.['200g'] },
+        ].filter(opt => opt.price != null && Number(opt.price) > 0) as Array<{ size: string; label: string; price: number }>;
 
-    const currentPrice = (product.prices?.[selectedSize] ?? sizeOptions.find(o => o.size === selectedSize)?.price ?? product.price) as number;
+    // Update selectedSize if current is not in options
+    useEffect(() => {
+        if (sizeOptions.length > 0 && !sizeOptions.find(o => o.size === selectedSize)) {
+            setSelectedSize(sizeOptions[0].size);
+        }
+    }, [sizeOptions, selectedSize]);
+
+    const currentPrice = (sizeOptions.find(o => o.size === selectedSize)?.price ?? product.price) as number;
 
     const rawImageList = product.images.length > 0 ? product.images : fallback.images;
     const imageList = rawImageList.map(img => resolveProductImageUrl(img, '/images/products/darjeeling-ff.jpg'));
