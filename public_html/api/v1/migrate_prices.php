@@ -1,5 +1,20 @@
 <?php
-require_once __DIR__ . '/config/db.php';
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+$envPath = dirname(dirname(dirname(__DIR__))) . '/.env';
+if (!file_exists($envPath)) {
+    $envPath = getcwd() . '/../../.env';
+}
+if (!file_exists($envPath)) {
+    $envPath = __DIR__ . '/../../../../.env'; // Hostinger common structure
+}
+
+require_once __DIR__ . '/config/env.php';
+load_env($envPath);
+require_once __DIR__ . '/config/constants.php';
+require_once __DIR__ . '/config/database.php';
+
 
 try {
     $db = get_db();
