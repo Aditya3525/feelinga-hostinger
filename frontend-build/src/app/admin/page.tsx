@@ -726,11 +726,6 @@ export default function Admin() {
         const normalizedOrigin = productForm.origin.trim();
         const normalizedSlug = (productForm.slug.trim() || normalizedName.toLowerCase().replace(/[^a-z0-9]+/g, '-')).replace(/(^-|-$)/g, '');
         const normalizedStock = Number(productForm.stock);
-        const price100g = Number(productForm['price100g']);
-        const price50gRaw = String(productForm['price50g'] || '').trim();
-        const price200gRaw = String(productForm['price200g'] || '').trim();
-        const price50g = price50gRaw ? Number(price50gRaw) : null;
-        const price200g = price200gRaw ? Number(price200gRaw) : null;
 
         if (!normalizedName || normalizedName.length < 2) {
             showToast('Product name must be at least 2 characters.', 'error');

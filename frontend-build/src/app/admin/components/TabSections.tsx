@@ -387,7 +387,8 @@ export function ProductsTab({
                                     <div className="admin-product-images">
                                         {productForm.images.map((url: string, i: number) => (
                                             <div key={i} className="admin-product-images__thumb">
-                                                <Image src={url} alt={`Product ${i + 1}`} width={72} height={72} className="admin-product-images__img" />
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img src={url} alt={`Product ${i + 1}`} width={72} height={72} className="admin-product-images__img" style={{objectFit:'cover',width:'72px',height:'72px',borderRadius:'6px'}} />
                                                 <button type="button" className="admin-product-images__remove" onClick={() => removeImage(i)}><AppIcon name="xCircle" size={12} aria-hidden /></button>
                                             </div>
                                         ))}
