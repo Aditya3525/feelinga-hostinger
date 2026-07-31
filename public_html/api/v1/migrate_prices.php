@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/public_html/api/v1/config/db.php';
+require_once __DIR__ . '/config/db.php';
 
 try {
     $db = get_db();
